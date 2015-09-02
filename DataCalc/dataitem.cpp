@@ -170,15 +170,33 @@ void Dataitem::combin_to_string_num()
 		_collcounter.insert(std::make_pair(counter, make_pair(combiniter->first,combiniter->second)));
 	}
 
+	prinf_csv();
 	
 }
 
 void Dataitem::prinf_csv()
 {
+	std::ofstream ofile;
+	ofile.open("c:\\b.csv");
+	if (ofile.bad())
+	{
+		std::cout << "aa";
+	}
+
+
+	ofile << "次数,预测,位1,位2,位3,位4,位5" << std::endl;
+
+	
 	auto showiter = _collcounter.begin();
 	for (; showiter != _collcounter.end(); ++showiter)
 	{
-		std::cout << showiter->first << "   " << showiter->second.first << " "
-			<< showiter->second.second << std::endl;
+		ofile << showiter->first << ",";
+		ofile << showiter->second.second << ",";
+		ofile << showiter->second.first << std::endl;
+	/*	ofile << showiter->first << "," << showiter->second.first << ","
+			<< showiter->second.second << std::endl;*/
 	}
+
+
+	ofile.close();
 }
