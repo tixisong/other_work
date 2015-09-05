@@ -9,8 +9,9 @@ int main()
 {
 	
 	Dataitem dataitem;
-	dataitem.openfile("≤‚ ‘”√.csv");
-
+	bool bRet = dataitem.openfile("≤‚ ‘”√.csv");
+	if (!bRet)
+		cout << "open csv error!";
 	dataitem.readfile();
 
 }

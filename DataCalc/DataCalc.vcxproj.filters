@@ -21,9 +21,15 @@
     <ClCompile Include="dataitem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MyLog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dataitem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLog.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

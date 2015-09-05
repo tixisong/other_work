@@ -10,16 +10,25 @@
 #include <algorithm> 
 #include <functional>
 
+#include <hash_map>
+
 class Dataitem
 {
 public:
 	struct ValueBit {
-		short bit1;
-		short bit2;
-		short bit3;
-		short bit4;
-		short bit5;
-		ValueBit() :bit1(0), bit2(0), bit3(0), bit4(0), bit5(0){}
+		std::vector<int> bit1;
+		std::vector<int> bit2;
+		std::vector<int> bit3;
+		std::vector<int> bit4;
+		std::vector<int> bit5;
+		ValueBit()
+		{
+			bit1.reserve(15);
+			bit2.reserve(15);
+			bit3.reserve(15);
+			bit4.reserve(15);
+			bit5.reserve(15);
+		}
 	};
 
 public:
@@ -28,21 +37,20 @@ public:
 
 private:
 	std::fstream _file;
-	typedef std::multimap<int, ValueBit> COLLDATE;
+	typedef std::map<int, ValueBit,std::greater<int> > COLLDATE;
 	COLLDATE _colldata;
-	std::vector<int> _prediction_id;
+	typedef COLLDATE::const_iterator ITER_COLL_DATA;
+	std::vector<int> _coll_prediction_id;
 
-	typedef std::multimap<std::string, int> COMBINE;
-	COMBINE _combine;
-
-	typedef std::multimap<int,std::pair<std::string,int>,std::greater<int> > COLLCOUNTRE;
-	COLLCOUNTRE _collcounter;
+	//转成字符 统计 出现的序号 + 出现的次数 
+	//std::map<std::string, std::vector<std::pair<int, int>>> _collcounter;
+	std::hash_map<std::string, int> _collcounter;
+	//std::hash_map<_int64, int> _collcounter;
 
 private:
 	void analyze_prediction_id(const std::string & line);
 	void analyze_value_bit(const std::string & line);
-	void combin_to_string_num();
-	
+	void counter_show();
 	void prinf_csv();
 
 

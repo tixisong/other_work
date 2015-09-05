@@ -80,9 +80,11 @@
   <ItemGroup>
     <ClCompile Include="dataitem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyLog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dataitem.h" />
+    <ClInclude Include="MyLog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
