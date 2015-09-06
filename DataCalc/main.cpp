@@ -9,9 +9,10 @@ int main()
 {
 	
 	Dataitem dataitem;
-	bool bRet = dataitem.openfile("测试用.csv");
+	bool bRet = dataitem.openfile("测试用 - 副本.csv");
 	if (!bRet)
 		cout << "open csv error!";
+	bRet = dataitem.createtable();
 	dataitem.readfile();
 
 }

@@ -9,8 +9,10 @@
 #include <iostream>
 #include <algorithm> 
 #include <functional>
-
 #include <hash_map>
+#include "sqlite3.h"
+
+#pragma comment(lib,"sqlite3.lib")
 
 class Dataitem
 {
@@ -47,6 +49,8 @@ private:
 	std::hash_map<std::string, int> _collcounter;
 	//std::hash_map<_int64, int> _collcounter;
 
+	sqlite3 * db;
+
 private:
 	void analyze_prediction_id(const std::string & line);
 	void analyze_value_bit(const std::string & line);
@@ -56,9 +60,13 @@ private:
 
 
 
+
+
+
 public:
 	bool openfile(const std::string & filename);
 	bool readfile();
+	bool createtable();
 
 
 };

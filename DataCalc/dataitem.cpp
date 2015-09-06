@@ -2,6 +2,7 @@
 
 #include "MyLog.h"
 
+
 Dataitem::Dataitem()
 {
 	_coll_prediction_id.reserve(1010);
@@ -13,6 +14,46 @@ Dataitem::~Dataitem()
 }
 
 
+bool  Dataitem::createtable()
+{
+	int rc = sqlite3_open("data.db", &db);
+
+	rc = sqlite3_exec(db, "PRAGMA synchronous = OFF", nullptr, nullptr, 0);
+	rc = sqlite3_exec(db, "PRAGMA journal_mode = MEMORY", nullptr, nullptr, 0);
+	rc = sqlite3_exec(db, "PRAGMA cache_size = 8000", nullptr, nullptr, 0);
+	rc = sqlite3_exec(db, "PRAGMA page_size = 8192", nullptr, nullptr, 0);
+
+	if (rc)
+	{
+		std::cout << "create db error" << std::endl;
+		return false;
+	}
+	char * sql;
+	char * errMsg;
+	sql = "create table if not exists t_data (combine_num text,prediction_id int);";
+	rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+	if (rc)
+	{
+		std::cout << errMsg << endl;
+		sqlite3_free(errMsg);
+		return false;
+	}
+
+	/*sql = "create index if not exists COMBINE_NUM on t_data(combine_num);";
+	rc = sqlite3_exec(db, sql, NULL, NULL, &errMsg);
+	if (rc)
+	{
+		std::cout << errMsg << endl;
+		sqlite3_free(errMsg);
+		return false;
+	}*/
+
+	return true;
+
+
+}
+
+
 bool Dataitem::openfile(const std::string & filename)
 {
 	_file.open(filename);
@@ -20,6 +61,8 @@ bool Dataitem::openfile(const std::string & filename)
 		return false;
 	return true;
 }
+
+
 
 bool Dataitem::readfile()
 {
@@ -121,6 +164,23 @@ void Dataitem::counter_show()
 {
 	clock_t t = clock();
 
+	sqlite3_stmt * stmt;
+	char *errMsg;
+	char * tail = 0;
+	char sql[256] = { 0 };
+	sprintf_s(sql, 256, "insert into t_data values (@RT, @BR)");
+	int rc = sqlite3_prepare_v2(db, sql, 256, &stmt, nullptr);
+	if (rc)
+	{
+		std::cout << "insert into t_data values error"  << endl;
+	}
+	
+	rc = sqlite3_exec(db, "begin transaction", 0, 0, &errMsg);
+	if (rc)
+	{
+		std::cout << "begin transaction error" << endl;
+	}
+
 	ITER_COLL_DATA iter = _colldata.begin();
 	for (; iter != _colldata.end(); ++iter)
 	{
@@ -140,46 +200,23 @@ void Dataitem::counter_show()
 							_itoa_s(iter->second.bit3[num3], cnum3, 10);
 							_itoa_s(iter->second.bit4[num4], cnum4, 10);
 							_itoa_s(iter->second.bit5[num5], cnum5, 10);
-							
-							strcat_s(cnum1 + strlen(cnum1), 5,"*");
-							strcat_s(cnum2 + strlen(cnum2), 5, "*");
-							strcat_s(cnum3 + strlen(cnum3), 5, "*");
-							strcat_s(cnum4 + strlen(cnum4), 5, "*");
-							//strcat_s(cnum5 + strlen(cnum5), 5, "*");
-
-
+							strcat_s(cnum1, 5,"*");
+							strcat_s(cnum2, 5, "*");
+							strcat_s(cnum3, 5, "*");
+							strcat_s(cnum4, 5, "*");
 							char cnum[40] = { 0 };
-							strcat_s(cnum + strlen(cnum), 40, cnum1);
-							strcat_s(cnum + strlen(cnum), 40, cnum2);
-							strcat_s(cnum + strlen(cnum), 40, cnum3);
-							strcat_s(cnum + strlen(cnum), 40, cnum4);
-							strcat_s(cnum + strlen(cnum), 40, cnum5);
+							strcat_s(cnum, 40, cnum1);
+							strcat_s(cnum, 40, cnum2);
+							strcat_s(cnum, 40, cnum3);
+							strcat_s(cnum, 40, cnum4);
+							strcat_s(cnum, 40, cnum5);
 
+							rc = sqlite3_bind_text(stmt, 1, cnum, -1, SQLITE_TRANSIENT);
+							rc = sqlite3_bind_int(stmt, 2, 1);
+							sqlite3_step(stmt);     /* Execute the SQL Statement */
+							sqlite3_clear_bindings(stmt);   /* Clear bindings */
+							sqlite3_reset(stmt);        /* Reset VDBE */
 
-
-
-
-						//	string snum = string(cnum1) + string(cnum2) + string(cnum3) + string(cnum4) + string(cnum5);
-
-
-
-
-
-							/*std::string snum = std::to_string(iter->second.bit1[num1]) +
-								"*" + std::to_string(iter->second.bit2[num2]) +
-								"*" + std::to_string(iter->second.bit3[num3]) +
-								"*" + std::to_string(iter->second.bit4[num4]) +
-								"*" + std::to_string(iter->second.bit5[num5]);
-								*/
-							
-
-						/*	auto iter_find = _collcounter.find(cnum);
-							if (iter_find != _collcounter.end())
-							{
-								iter_find->second++;
-							}
-							else*/
-							//	_collcounter.insert(std::make_pair(cnum, 1));
 						}
 					}
 				}
@@ -187,14 +224,32 @@ void Dataitem::counter_show()
 		}
 	}
 
+
+	rc = sqlite3_exec(db, "commit transaction", 0, 0, &errMsg);
+	if (rc)
+	{
+		std::cout << "commit transaction error" << endl;
+	}
+
+	sqlite3_finalize(stmt);
+
+
+	sprintf_s(sql, 256, "create index if not exists COMBINE_NUM on t_data(combine_num);");
+	rc = sqlite3_exec(db, sql, NULL, NULL, &errMsg);
+	if (rc)
+	{
+		std::cout << errMsg << endl;
+		sqlite3_free(errMsg);
+	}
+
 	cout << "counter time: " << clock() - t << endl;
 
-	auto itercount = _collcounter.begin();
+	/*auto itercount = _collcounter.begin();
 	for (; itercount != _collcounter.end(); ++itercount)
 	{
 	LOG(itercount->first << "   " << itercount->second);
 	}
-
+*/
 	cout << "Log time: " << clock() - t << endl;
 }
 
