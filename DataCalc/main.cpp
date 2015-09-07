@@ -7,7 +7,6 @@ using namespace std;
 
 int main()
 {
-	
 	Dataitem dataitem;
 	bool bRet = dataitem.openfile("≤‚ ‘”√ - ∏±±æ.csv");
 	if (!bRet)

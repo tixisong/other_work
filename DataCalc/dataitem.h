@@ -39,29 +39,22 @@ public:
 
 private:
 	std::fstream _file;
-	typedef std::map<int, ValueBit,std::greater<int> > COLLDATE;
-	COLLDATE _colldata;
-	typedef COLLDATE::const_iterator ITER_COLL_DATA;
+	typedef std::map<int, ValueBit,std::greater<int> > COLLDATA;
+	COLLDATA _colldata;
+	typedef COLLDATA::const_iterator ITER_COLL_DATA;
 	std::vector<int> _coll_prediction_id;
+	std::vector<COLLDATA> _thread_coll_data;
 
-	//转成字符 统计 出现的序号 + 出现的次数 
-	//std::map<std::string, std::vector<std::pair<int, int>>> _collcounter;
-	std::hash_map<std::string, int> _collcounter;
-	//std::hash_map<_int64, int> _collcounter;
-
+	//std::map<std::string, int> _collcounter;
 	sqlite3 * db;
 
 private:
 	void analyze_prediction_id(const std::string & line);
 	void analyze_value_bit(const std::string & line);
+	void split_colldata();
 	void counter_show();
 	void prinf_csv();
-
-
-
-
-
-
+	void insert_db(int index);
 
 public:
 	bool openfile(const std::string & filename);
