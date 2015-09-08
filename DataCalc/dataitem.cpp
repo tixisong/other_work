@@ -271,6 +271,8 @@ void Dataitem::insert_db(int index)
 		sqlite3_free(errMsg);
 	}*/
 
+	std::cout << "thread id exit:" << this_thread::get_id()  << std::endl;
+
 }
 
 
@@ -413,3 +415,10 @@ void Dataitem::counter_show()
 //
 //	ofile.close();
 //}
+
+
+bool Dataitem::search_data(int counter)
+{
+//	select combine_num, count(*) from t_data_0 group by combine_num having count(*) > 5;
+
+}

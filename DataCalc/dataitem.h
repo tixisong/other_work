@@ -60,7 +60,7 @@ public:
 	bool openfile(const std::string & filename);
 	bool readfile();
 	bool createtable();
-
+	bool search_data(int counter);
 
 };
 
