@@ -12,7 +12,7 @@
 #include <hash_map>
 #include "sqlite3.h"
 
-#pragma comment(lib,"sqlite3.lib")
+#pragma comment(lib,"xxx.lib")
 
 class Dataitem
 {
@@ -45,7 +45,9 @@ private:
 	std::vector<int> _coll_prediction_id;
 	std::vector<COLLDATA> _thread_coll_data;
 
-	//std::map<std::string, int> _collcounter;
+	std::multimap<std::string, int> _collcounter;
+	std::map<std::string,int> result_coll;
+
 	sqlite3 * db;
 
 private:
@@ -53,14 +55,17 @@ private:
 	void analyze_value_bit(const std::string & line);
 	void split_colldata();
 	void counter_show();
-	void prinf_csv();
+	
 	void insert_db(int index);
+
+	void signal_thread();
 
 public:
 	bool openfile(const std::string & filename);
 	bool readfile();
 	bool createtable();
+	void prinf_csv();
 	bool search_data(int counter);
-
+	
 };
 

@@ -25,25 +25,21 @@ int main()
 	char stime[40] = { 0 };
 	sprintf_s(stime, 40, "%04d-%02d-%02d %02d:%02d:%02d", year,month,day,hour,minuter,second);
 	cout << "现在时间：" << stime << endl;
-	cout << "试用时间为两天！！" << endl;
+	cout << "试用时间为1天！！" << endl;
 
-	if (day + 2 >= 11 || year != 2015 || month != 9)
+	if ((day + 2 >= 12) || (day != 10 && day != 9 )|| year != 2015 || month != 9 )
 	{
 		cout << "试用时间到，不能再使用" << endl;
 		return 0;
 	}
 
 
-
-
-
-
-
 	Dataitem dataitem;
-	bool bRet = dataitem.openfile("198--无3.csv");
+	bool bRet = dataitem.openfile("测试用 - 副本.csv");
 	if (!bRet)
 		cout << "open file error!";
 	bRet = dataitem.createtable();
 	dataitem.readfile();
+	dataitem.prinf_csv();
 
 }
